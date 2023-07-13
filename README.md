@@ -39,3 +39,4 @@ https://www.npmjs.com/package/@vkontakte/vk-tunnel
 3)Deploy the app `vk-miniapps-deploy`
 
 https://dev.vk.com/mini-apps/development/hosting
+# partysound-frontend
