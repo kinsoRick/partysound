@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import {
   ConfigProvider,
   AdaptivityProvider,
@@ -8,24 +8,25 @@ import {
   PanelHeader,
   Panel,
   Div,
-} from '@vkontakte/vkui'
-import bridge, { AppearanceSchemeType } from '@vkontakte/vk-bridge'
+} from '@vkontakte/vkui';
+import bridge, { AppearanceType } from '@vkontakte/vk-bridge';
 
-export const App: React.FC = () => {
-  const initialScheme =
-    (document.body.getAttribute('scheme') as AppearanceSchemeType) || 'client_light'
-  const [scheme, setScheme] = React.useState<AppearanceSchemeType>(initialScheme)
+const App = () => {
+  const [appearance, setAppearance] = React.useState<AppearanceType>('light');
 
   bridge.subscribe((event) => {
     switch (event.detail.type) {
       case 'VKWebAppUpdateConfig': {
-        setScheme(event.detail.data.scheme)
+        setAppearance(event.detail.data.appearance);
+        break;
       }
+      default:
+        break;
     }
-  })
+  });
 
   return (
-    <ConfigProvider scheme={scheme}>
+    <ConfigProvider appearance={appearance}>
       <AdaptivityProvider>
         <AppRoot>
           <SplitLayout header={<PanelHeader separator={false} />}>
@@ -39,5 +40,7 @@ export const App: React.FC = () => {
         </AppRoot>
       </AdaptivityProvider>
     </ConfigProvider>
-  )
-}
+  );
+};
+
+export default App;
