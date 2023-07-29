@@ -24,7 +24,10 @@ module.exports = {
         "@typescript-eslint"
     ],
     "rules": {
-        'react/jsx-filename-extension': [2, { 'extensions': ['.js', '.jsx', '.ts', '.tsx'] }],
+        "react/require-default-props": "off",
+        "react/jsx-uses-react": "off",
+        "react/react-in-jsx-scope": "off",
         'react/function-component-definition': [2, { "namedComponents": "arrow-function" }],
+        'no-param-reassign': ['error', { props: false }],
     }
 }

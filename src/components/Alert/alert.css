@@ -1,0 +1,31 @@
+.alert-group {
+    display: flex;
+}
+
+.alert-group svg {
+    margin-top: 3px;
+}
+
+.alert-group p {
+    margin-top: 3px;
+    color: var(--vkui--color_text_secondary);
+}
+
+
+.flex {
+    display: flex;
+}
+
+.flex-column {
+    flex-direction: column;
+}
+
+.alert-group .alert-header {
+    padding: 0;
+    margin: 0;
+}
+
+.alert-group .alert-header div {
+    padding: 0;
+    margin: 0;
+}

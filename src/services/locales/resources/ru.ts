@@ -1,0 +1,26 @@
+const ru = {
+  friends: 'Друзья',
+  params: 'Параметры',
+  playlists: 'Плейлисты',
+  selectedFriends: 'Выбранные друзья',
+  noPlaylists: 'Упс! Мы не нашли ваших плейлистов',
+  noPlaylistsAction: 'Составьте плейлист, чтобы мы могли отобразить его тут',
+  viewAll: 'Показать все',
+  main: 'Главная',
+  favorite: 'Избранное',
+  settings: 'Настройки',
+  select: 'Выбрать',
+  noAccessToAudios: 'Нет доступа к аудиозаписям',
+  audiosPrivacy: 'Похоже настройки приватности мешают нам получить список ваших аудиозаписей. Давайте изменим это!',
+  changePrivacySettings: 'Изменить настройки приватности',
+  options: 'Опции',
+  playlistName: 'Название плейлиста',
+  setPlaylistName: 'Введите название плейлиста',
+  useUserAccount: 'Использовать мой аккаунт в сборе',
+  useUserAccountDescription: 'Ваши треки будут учитываться при составления плейлистаВаши треки будут учитываться при составления плейлиста',
+  onlyVerifiedArtists: 'Добавлять только верифицированных артистов',
+  onlyVerifiedArtistsDescription: 'Только те треки, у которых авторы имеют страничку артиста',
+  createPlaylist: 'Составить плейлист',
+};
+
+export default ru;

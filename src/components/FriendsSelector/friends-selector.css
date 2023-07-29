@@ -1,0 +1,8 @@
+.friends-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.friends-group--btn-group {
+    padding: 14px;
+}
