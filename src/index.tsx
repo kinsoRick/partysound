@@ -20,11 +20,7 @@ initTranslation();
 const container = document.getElementById('root') as HTMLElement;
 const root = createRoot(container);
 // TODO [$64c68fd74a37ff00096d52eb]: TESTING
-//
-// Code that interface with external data have been separated into their own modules.
-// These includes:
-//
-// - another try
+// TODO: NEW TESTING
 root.render(
   <React.StrictMode>
     <Provider store={store}>
