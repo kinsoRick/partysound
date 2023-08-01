@@ -8,8 +8,8 @@ const PlaylistGroup = () => {
 
   return (
     <Group mode="plain">
-      <Header mode="primary" aside={<Link href="/">Показать все</Link>}>
-        Плейлисты
+      <Header mode="primary" aside={<Link href="/">{t('viewAll')}</Link>}>
+        {t('playlists')}
       </Header>
       <Placeholder
         header={t('noPlaylists')}

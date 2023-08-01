@@ -1,16 +1,17 @@
 import {
   ModalRoot,
 } from '@vkontakte/vkui';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import selectModal from '../store/selectors/modals.selectors';
 import { setActiveModalName } from '../store/slices/ui/modals.slice';
 
 import FriendsSelectorModal from './FriendsSelectorModal';
+import { useAppDispatch } from '../store';
 
 const ModalContainer = () => {
   const activeModal = useSelector(selectModal);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const closeModal = () => dispatch(setActiveModalName(''));
 

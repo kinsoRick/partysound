@@ -1,38 +1,45 @@
 import {
   FormStatus, Group, Div, Header, Button,
 } from '@vkontakte/vkui';
+
+import { Icon24Cancel, Icon28ReportOutline } from '@vkontakte/icons';
+import { useSelector } from 'react-redux';
+import { TRootState, useAppDispatch } from '../../store';
+import { EAlertType, removeAlert } from '../../store/slices/ui/alert.slice';
+
 import './alert.css';
-import { Icon24Cancel } from '@vkontakte/icons';
 
-interface Props {
-  header: string;
-  description: string;
-  type: 'default' | 'error' | undefined;
-  icon: JSX.Element;
-  action: JSX.Element;
-}
+const Alert = () => {
+  const dispatch = useAppDispatch();
 
-const Alert = ({
-  header, description, type, icon, action,
-}: Props) => (
-  <FormStatus mode={type}>
-    <Group className="alert-group" mode="plain">
-      <Div>
-        {icon}
-      </Div>
-      <Div className="flex flex-column">
-        <Header size="large" className="alert-header">
-          {header}
-        </Header>
+  const type = useSelector((state: TRootState) => state.ui.alert.type);
+  const header = useSelector((state: TRootState) => state.ui.alert.header);
+  const visible = useSelector((state: TRootState) => state.ui.alert.visible);
+  const description = useSelector((state: TRootState) => state.ui.alert.description);
 
-        <p>{description}</p>
-        {action}
-      </Div>
-      <Div>
-        <Button mode="link"><Icon24Cancel /></Button>
-      </Div>
-    </Group>
-  </FormStatus>
-);
+  const closeAlert = () => dispatch(removeAlert());
+
+  const icon = (type === EAlertType.ERROR) ? <Icon28ReportOutline fill="E64646" /> : null;
+
+  return visible ? (
+    <FormStatus mode="default">
+      <Group className="alert-group" mode="plain">
+        <Div>{icon}</Div>
+        <Div className="flex flex-column">
+          <Header size="large" className="alert-header">
+            {header}
+          </Header>
+
+          <p>{description}</p>
+        </Div>
+        <Div>
+          <Button mode="link" onClick={closeAlert}>
+            <Icon24Cancel />
+          </Button>
+        </Div>
+      </Group>
+    </FormStatus>
+  ) : null;
+};
 
 export default Alert;

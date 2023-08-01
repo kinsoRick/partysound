@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   ConfigProvider,
   AdaptivityProvider,
@@ -6,30 +5,30 @@ import {
   Epic,
   SplitLayout,
 } from '@vkontakte/vkui';
-import bridge, { AppearanceType } from '@vkontakte/vk-bridge';
 import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+
 import selectStory from './store/selectors/epic.selectors';
 import Home from './pages/Home';
 import BottomMenu from './components/BottomMenu';
 import ModalContainer from './modals';
 
-const App = () => {
-  const [appearance, setAppearance] = useState<AppearanceType>('light');
-  const activeStory = useSelector(selectStory);
+import { useAppDispatch } from './store';
+import getLaunchParams from './store/actions/getLaunchParams.action';
+import getUserInfo from './store/actions/getUserInfo.action';
+// import getUserInfo from './store/actions/getUserInfo.action';
 
-  bridge.subscribe((event) => {
-    switch (event.detail.type) {
-      case 'VKWebAppUpdateConfig': {
-        setAppearance(event.detail.data.appearance);
-        break;
-      }
-      default:
-        break;
-    }
-  });
+const App = () => {
+  const activeStory = useSelector(selectStory);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(getLaunchParams());
+    dispatch(getUserInfo());
+  }, [dispatch]);
 
   return (
-    <ConfigProvider appearance={appearance}>
+    <ConfigProvider>
       <AdaptivityProvider>
         <AppRoot>
           <SplitLayout modal={<ModalContainer />}>

@@ -2,24 +2,25 @@ import {
   Header, ButtonGroup, Button, Group,
 } from '@vkontakte/vkui';
 import { useTranslation } from 'react-i18next';
-import bridge from '@vkontakte/vk-bridge';
+import { useSelector } from 'react-redux';
+
 import './friends-selector.css';
-import { useDispatch } from 'react-redux';
+
+import { TRootState, useAppDispatch } from '../../store';
+import getUserAccessToken from '../../store/actions/getUserAccessToken.action';
 import { setActiveModalName } from '../../store/slices/ui/modals.slice';
 
 const FriendsSelector = () => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+
+  const platform = useSelector((state: TRootState) => state.config.platform);
 
   const selectFriends = () => {
-    dispatch(setActiveModalName('friendsSelectorModal'));
-    bridge.send('VKWebAppGetFriends')
-      .then((data) => {
-        console.log(data);
-      })
-      .catch(() => {
-        dispatch(setActiveModalName('friendsSelectorModal'));
-      });
+    if (platform === 'mobile_web') {
+      dispatch(getUserAccessToken(['friends']));
+      dispatch(setActiveModalName('friendsSelectorModal'));
+    }
   };
 
   return (
