@@ -16,7 +16,6 @@ import ModalContainer from './modals';
 import { useAppDispatch } from './store';
 import getLaunchParams from './store/actions/getLaunchParams.action';
 import getUserInfo from './store/actions/getUserInfo.action';
-// import getUserInfo from './store/actions/getUserInfo.action';
 
 const App = () => {
   const activeStory = useSelector(selectStory);

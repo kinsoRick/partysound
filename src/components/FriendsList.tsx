@@ -1,45 +1,95 @@
-import { Spinner, Text } from '@vkontakte/vkui';
+import {
+  Button, Counter, Spinner, Text,
+} from '@vkontakte/vkui';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { useTranslation } from 'react-i18next';
 import FriendItem from './FriendItem';
-import { TRootState } from '../store';
+import { TRootState, useAppDispatch } from '../store';
+import { TFriendItem, setSelectedFriends } from '../store/slices/friends';
+import { closeAllModals } from '../store/slices/ui/modals.slice';
 
-const FriendsList = (): JSX.Element => {
+interface Props {
+  mode: 'select' | 'view';
+}
+
+const FriendsList = ({ mode }: Props): JSX.Element => {
   const { t } = useTranslation();
-  const [selectedFriends, setSelectedFriends] = useState<number[]>([]);
+  const dispatch = useAppDispatch();
 
-  const friends = useSelector((state: TRootState) => state.friends.filtered);
-  const allFriendsLength = useSelector((state: TRootState) => state.friends.all.length);
+  const [friendsToAdd, setFriendsToAdd] = useState<TFriendItem[]>([]);
 
-  const action = (id: number) => {
-    if (selectedFriends.includes(id)) {
-      setSelectedFriends(selectedFriends.filter((friend) => friend !== id));
+  const friends = useSelector((state: TRootState) => state.friends);
+  const status = useSelector((state: TRootState) => state.friends.status);
+
+  const action = (friendProvided: TFriendItem) => {
+    if (friendsToAdd.includes(friendProvided)) {
+      setFriendsToAdd(
+        friendsToAdd.filter((friend) => friend !== friendProvided),
+      );
     } else {
-      setSelectedFriends([...selectedFriends, id]);
+      setFriendsToAdd([...friendsToAdd, friendProvided]);
     }
   };
 
-  if (allFriendsLength < 1) {
-    return <Spinner />;
+  const onSubmit = () => {
+    dispatch(setSelectedFriends(friendsToAdd));
+    dispatch(closeAllModals());
+  };
+
+  const button = (
+    <Button
+      appearance="positive"
+      className="btn-flex-trim btn-fixed-bottom"
+      size="m"
+      after={<Counter>{friendsToAdd.length}</Counter>}
+      onClick={onSubmit}
+    >
+      {t('selectFriends')}
+    </Button>
+  );
+
+  if (mode === 'view') {
+    return (
+      <>
+        {friends.selected.map((friend) => (
+          <FriendItem
+            onClick={() => {}}
+            key={friend.id}
+            isClosed={friend.is_closed}
+            displayName={`${friend.first_name} ${friend.last_name}`}
+            photo={friend.photo_200_orig}
+          />
+        ))}
+      </>
+    );
   }
-  if (friends.length < 1) {
-    return <Text className="friends-selector-info">{t('emptyCheckSearch')}</Text>;
+
+  if (status === 'pending') return <Spinner />;
+  if (friends.filtered.length < 1) {
+    return (
+      <>
+        {button}
+        <Text className="friends-selector-info">{t('emptyCheckSearch')}</Text>
+      </>
+    );
   }
+
+  const friendsToRender = friends.filtered.map((friend) => (
+    <FriendItem
+      onClick={() => action(friend)}
+      key={friend.id}
+      isClosed={friend.is_closed}
+      displayName={`${friend.first_name} ${friend.last_name}`}
+      photo={friend.photo_200_orig}
+    />
+  ));
 
   return (
     <>
-      {friends.map((friend) => (
-        <FriendItem
-          onClick={() => action(friend.id)}
-          checked={selectedFriends.includes(friend.id)}
-          key={friend.id}
-          isClosed={friend.is_closed}
-          displayName={`${friend.first_name} ${friend.last_name}`}
-          photo={friend.photo_200_orig}
-        />
-      ))}
+      {button}
+      {friendsToRender}
     </>
   );
 };

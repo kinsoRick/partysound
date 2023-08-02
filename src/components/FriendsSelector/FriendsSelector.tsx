@@ -7,18 +7,21 @@ import { useSelector } from 'react-redux';
 import './friends-selector.css';
 
 import { TRootState, useAppDispatch } from '../../store';
-import getUserAccessToken from '../../store/actions/getUserAccessToken.action';
 import { setActiveModalName } from '../../store/slices/ui/modals.slice';
+
+import FriendsList from '../FriendsList';
+import getUserAccessToken from '../../store/actions/getUserAccessToken.action';
 
 const FriendsSelector = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const platform = useSelector((state: TRootState) => state.config.platform);
+  const friendsStatus = useSelector((state: TRootState) => state.friends.status);
 
   const selectFriends = () => {
     if (platform === 'mobile_web') {
-      dispatch(getUserAccessToken(['friends']));
+      if (friendsStatus === 'idle') dispatch(getUserAccessToken(['friends']));
       dispatch(setActiveModalName('friendsSelectorModal'));
     }
   };
@@ -36,6 +39,7 @@ const FriendsSelector = () => {
           {t('select')}
         </Button>
       </ButtonGroup>
+      <FriendsList mode="view" />
     </Group>
   );
 };

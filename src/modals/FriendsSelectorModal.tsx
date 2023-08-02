@@ -4,13 +4,15 @@ import {
   Group,
   Header,
   ModalPage,
-  Button,
   Title,
+  Button,
   Search,
 } from '@vkontakte/vkui';
+import { Icon24CancelOutline } from '@vkontakte/icons';
 import { useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import { useEffect, useState } from 'react';
+import {
+  useEffect, useState,
+} from 'react';
 import debounce from 'lodash.debounce';
 
 import { setActiveModalName } from '../store/slices/ui/modals.slice';
@@ -26,39 +28,42 @@ interface Props {
 }
 
 const FriendsSelectorModal = ({ id }: Props) => {
-  const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const [search, setSearch] = useState('');
-  const searchChange = (value: string) => {
-    setSearch(value);
-  };
-
+  const searchChange = (value: string) => setSearch(value);
   const debouncedSearchChange = debounce(searchChange, 700);
 
   const firstName = useSelector((state: TRootState) => state.user.firstName);
   const lastName = useSelector((state: TRootState) => state.user.lastName);
   const photo = useSelector((state: TRootState) => state.user.photo);
 
-  const friends = useSelector((state: TRootState) => state.friends.all);
+  const friendsAll = useSelector((state: TRootState) => state.friends.all);
+  const friendsStatus = useSelector((state: TRootState) => state.friends.status);
 
   useEffect(() => {
-    const filtered = friends.filter((friend) => {
-      const firstNameStart = friend.first_name.startsWith(search);
-      const lastNameStart = friend.last_name.startsWith(search);
-      return firstNameStart || lastNameStart;
-    });
-
-    dispatch(setFilteredFriends(filtered));
-  }, [friends, search, dispatch]);
+    if (friendsStatus === 'fulfilled') {
+      const filtered = friendsAll.filter((friend) => {
+        const firstNameStart = friend.first_name.startsWith(search);
+        const lastNameStart = friend.last_name.startsWith(search);
+        return firstNameStart || lastNameStart;
+      });
+      dispatch(setFilteredFriends(filtered));
+    }
+  }, [friendsAll, dispatch, search, friendsStatus]);
 
   const closeModal = () => dispatch(setActiveModalName(''));
 
   return (
-    <ModalPage id={id} onClose={closeModal} settlingHeight={100}>
-      <Gradient
-        className="friends-selector-header"
-      >
+    <ModalPage
+      dynamicContentHeight
+      id={id}
+      onClose={closeModal}
+    >
+      <Gradient className="friends-selector-header">
+        <Button className="modal-btn-close" mode="link" onClick={closeModal}>
+          <Icon24CancelOutline />
+        </Button>
         <Avatar size={96} src={photo} />
         <Title className="header-title" level="2" weight="2">
           {`${firstName} ${lastName}`}
@@ -67,22 +72,17 @@ const FriendsSelectorModal = ({ id }: Props) => {
 
       <Group
         header={(
-          <Header mode="secondary" indicator={friends.length}>
+          <Header mode="secondary" indicator={friendsAll.length}>
             Друзья
           </Header>
         )}
         className="flex flex-column content-center"
       >
-        <Search onChange={(e) => debouncedSearchChange(e.currentTarget.value)} />
+        <Search
+          onChange={(e) => debouncedSearchChange(e.currentTarget.value)}
+        />
 
-        <Button
-          appearance="positive"
-          className="btn-flex-trim"
-        >
-          {t('selectFriends')}
-        </Button>
-
-        <FriendsList />
+        <FriendsList mode="select" />
       </Group>
     </ModalPage>
   );

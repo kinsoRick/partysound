@@ -15,8 +15,11 @@ const modalsSlice = createSlice({
     setActiveModalName: (state, { payload }) => {
       state.activeModal = payload;
     },
+    closeAllModals: (state) => {
+      state.activeModal = '';
+    },
   },
 });
 
-export const { setActiveModalName } = modalsSlice.actions;
+export const { setActiveModalName, closeAllModals } = modalsSlice.actions;
 export default modalsSlice.reducer;

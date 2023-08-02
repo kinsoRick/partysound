@@ -10,12 +10,14 @@ export type TFriendItem = {
 };
 
 interface IFriendsState {
+  status: 'pending' | 'fulfilled' | 'error' | 'idle',
   all: TFriendItem[];
-  selected: number[];
+  selected: TFriendItem[];
   filtered: TFriendItem[];
 }
 
 const initialState: IFriendsState = {
+  status: 'idle',
   all: [],
   selected: [],
   filtered: [],
@@ -34,8 +36,14 @@ const friendsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(getFriends.pending, (state) => {
+        state.status = 'pending';
+        state.all = [];
+      })
       .addCase(getFriends.fulfilled, (state, { payload }) => {
         state.all = payload;
+        state.filtered = payload;
+        state.status = 'fulfilled';
       });
   },
 });
