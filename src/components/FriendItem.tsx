@@ -9,19 +9,32 @@ interface Props {
   displayName: string;
   photo: string;
   onClick: AnyFunction;
+  mode?: 'selectable' | 'removable';
 }
 
 const FriendItem = ({
-  isClosed, displayName, photo, onClick,
+  isClosed, displayName, photo, onClick, mode,
 }: Props) => {
   const { t } = useTranslation();
 
+  if (mode === undefined) {
+    return (
+      <Cell
+        onChange={onClick}
+        subtitle={isClosed ? <span style={{ color: '#F05A5A' }}>{t('audiosHidden')}</span> : null}
+        before={<Avatar src={photo} />}
+      >
+        {displayName}
+      </Cell>
+    );
+  }
+
   return (
     <Cell
-      onClick={onClick}
+      onChange={onClick}
       subtitle={isClosed ? <span style={{ color: '#F05A5A' }}>{t('audiosHidden')}</span> : null}
       before={<Avatar src={photo} />}
-      mode="selectable"
+      mode={mode}
     >
       {displayName}
     </Cell>
