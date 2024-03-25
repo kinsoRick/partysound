@@ -1,8 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-
-interface IEpicState {
-  activeStory: string;
-}
+import { IEpicState } from './types';
 
 const initialState: IEpicState = {
   activeStory: 'home',
@@ -18,5 +15,6 @@ const epicSlice = createSlice({
   },
 });
 
+export const { actions } = epicSlice;
 export const { setActiveStory } = epicSlice.actions;
 export default epicSlice.reducer;

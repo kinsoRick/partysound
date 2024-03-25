@@ -1,7 +1,7 @@
 import { SyntheticEvent, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tabbar, TabbarItem } from '@vkontakte/vkui';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
   Icon24HomeOutline,
   Icon24FavoriteOutline,
@@ -11,15 +11,16 @@ import {
   Icon28Settings,
 } from '@vkontakte/icons';
 import selectStory from '../store/selectors/epic.selectors';
-import { setActiveStory } from '../store/slices/ui/epic.slice';
+import useActions from '../hooks/useActions';
 
 const BottomMenu = () => {
   const { t } = useTranslation();
   const activeStory = useSelector(selectStory);
-  const dispatch = useDispatch();
+
+  const { setActiveStory } = useActions();
 
   const selectTab = (e: SyntheticEvent<HTMLElement>) => {
-    dispatch(setActiveStory(e.currentTarget.dataset.story));
+    setActiveStory(e.currentTarget.dataset.story);
   };
 
   const menuTabs = useMemo(

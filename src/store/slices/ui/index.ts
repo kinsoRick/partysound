@@ -1,7 +1,7 @@
 import { combineReducers } from '@reduxjs/toolkit';
-import epicReducer from './epic.slice';
-import modalsReducer from './modals.slice';
-import alertReducer from './alert.slice';
+import epicReducer from './epic';
+import modalsReducer from './modals';
+import alertReducer from './alert';
 
 const uiReducer = combineReducers({
   epic: epicReducer,

@@ -6,10 +6,11 @@ import {
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
-import FriendItem from './FriendItem';
-import { TRootState, useAppDispatch } from '../store';
-import { TFriendItem, setSelectedFriends } from '../store/slices/friends';
-import { closeAllModals } from '../store/slices/ui/modals.slice';
+import FriendItem, { SkeletonFriendItem } from './FriendItem';
+import { TRootState } from '../store';
+import { TFriendItem } from '../store/slices/friends/types';
+import { useFriendsMusicDeniedMutation } from '../services/api';
+import useActions from '../hooks/useActions';
 
 interface Props {
   mode: 'selectable' | 'view' | 'removable';
@@ -17,53 +18,47 @@ interface Props {
 
 const FriendsList: React.FC<Props> = ({ mode }: Props) => {
   const { t } = useTranslation();
-  const dispatch = useAppDispatch();
+  const { setSelectedFriends, closeAllModals } = useActions();
 
-  const [friendsToAdd, setFriendsToAdd] = useState<TFriendItem[]>([]);
+  const [getDeniedFriendsMusic] = useFriendsMusicDeniedMutation();
+  const [friends, setFriends] = useState<Set<TFriendItem>>(new Set());
 
-  const friends = useSelector((state: TRootState) => state.friends);
-  const status = useSelector((state: TRootState) => state.friends.status);
+  const {
+    selected, filtered, closed, status,
+  } = useSelector((state: TRootState) => state.friends);
 
-  const toggleFriendSelection = (friendProvided: TFriendItem) => {
-    if (friendsToAdd.includes(friendProvided)) {
-      setFriendsToAdd(friendsToAdd.filter((friend) => friend !== friendProvided));
+  const toggleFriendSelection = (friend: TFriendItem) => {
+    const friendsSet = new Set(friends);
+    if (friendsSet.has(friend)) {
+      friendsSet.delete(friend);
     } else {
-      setFriendsToAdd([...friendsToAdd, friendProvided]);
+      friendsSet.add(friend);
     }
+    setFriends(friendsSet);
   };
 
   const onSubmit = () => {
-    dispatch(setSelectedFriends(friendsToAdd));
-    dispatch(closeAllModals());
+    const friendsArray = Array.from(friends);
+    const friendsIds = friendsArray.map((friend) => friend.id);
+
+    setSelectedFriends(friendsArray);
+    getDeniedFriendsMusic(friendsIds);
+
+    closeAllModals();
   };
 
   const renderFriendItem = (friend: TFriendItem) => {
-    switch (mode) {
-      case 'view':
-        return (
-          <FriendItem
-            onClick={() => {}}
-            key={friend.id}
-            isClosed={friend.is_closed}
-            displayName={`${friend.first_name} ${friend.last_name}`}
-            photo={friend.photo_200_orig}
-          />
-        );
-      case 'selectable':
-      case 'removable':
-        return (
-          <FriendItem
-            onClick={() => toggleFriendSelection(friend)}
-            key={friend.id}
-            isClosed={friend.is_closed}
-            displayName={`${friend.first_name} ${friend.last_name}`}
-            photo={friend.photo_200_orig}
-            mode={mode}
-          />
-        );
-      default:
-        return null;
-    }
+    const isAccessToToggle = (!friend.is_closed && mode !== 'view' && closed.indexOf(friend.id) === -1);
+    return (
+      <FriendItem
+        onClick={() => (isAccessToToggle && toggleFriendSelection(friend))}
+        key={friend.id}
+        isClosed={friend.is_closed || closed.indexOf(friend.id) !== -1}
+        displayName={`${friend.first_name} ${friend.last_name}`}
+        photo={friend.photo_200_orig}
+        mode={(isAccessToToggle) ? mode : undefined}
+      />
+    );
   };
 
   const addFriendsButton = () => (
@@ -71,7 +66,7 @@ const FriendsList: React.FC<Props> = ({ mode }: Props) => {
       appearance="positive"
       className="btn-flex-trim btn-fixed-bottom"
       size="m"
-      after={<Counter>{friendsToAdd.length}</Counter>}
+      after={<Counter>{friends.size}</Counter>}
       onClick={onSubmit}
     >
       {t('selectFriends')}
@@ -80,23 +75,24 @@ const FriendsList: React.FC<Props> = ({ mode }: Props) => {
 
   const renderFriends = () => {
     if (status === 'pending') {
-      return <Spinner />;
+      if (mode === 'view') return <Spinner />;
+
+      return Array.from({ length: 10 }, (_, i) => i + 1)
+        .map((index) => <SkeletonFriendItem key={index} />);
     }
 
     switch (mode) {
       case 'view':
-        return friends.selected.map(renderFriendItem);
+        return selected.map(renderFriendItem);
       case 'selectable':
       case 'removable':
-        if (friends.filtered.length < 1) {
-          return (
-            <Text className="friends-selector-info">{t('emptyCheckSearch')}</Text>
-          );
+        if (filtered.length < 1) {
+          return <Text className="friends-selector-info">{t('emptyCheckSearch')}</Text>;
         }
         return (
           <>
             {addFriendsButton()}
-            {friends.filtered.map(renderFriendItem)}
+            {filtered.map(renderFriendItem)}
           </>
         );
       default:

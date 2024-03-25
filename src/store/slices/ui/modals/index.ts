@@ -1,8 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-
-interface IModalsState {
-  activeModal: string;
-}
+import { IModalsState } from './types';
 
 const initialState: IModalsState = {
   activeModal: '',
@@ -21,5 +18,6 @@ const modalsSlice = createSlice({
   },
 });
 
+export const { actions } = modalsSlice;
 export const { setActiveModalName, closeAllModals } = modalsSlice.actions;
 export default modalsSlice.reducer;

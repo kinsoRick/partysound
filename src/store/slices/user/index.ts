@@ -1,16 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
-import getUserInfo from '../../actions/getUserInfo.action';
-import getUserAccessToken from '../../actions/getUserAccessToken.action';
-import getLaunchParams from '../../actions/getLaunchParams.action';
-
-interface IUserState {
-  id: number;
-  accessToken: string;
-  firstName: string;
-  lastName: string;
-  photo: string;
-  scopes: string[];
-}
+import { getAccessToken, getUserInfo } from '../../../services/api/vk';
+import { IUserState } from './types';
+import userListeners from '../../../services/listeners/user.listener';
 
 const initialState: IUserState = {
   id: -1,
@@ -19,6 +10,7 @@ const initialState: IUserState = {
   lastName: '',
   photo: '',
   scopes: [],
+  closed: false,
 };
 
 const userSlice = createSlice({
@@ -29,26 +21,24 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getUserInfo.fulfilled, (state, { payload }) => {
+      .addMatcher(getUserInfo.matchFulfilled, (state, { payload }) => {
         state.id = payload.id;
         state.firstName = payload.firstName;
         state.lastName = payload.lastName;
         state.photo = payload.photo;
       })
-      .addCase(getUserInfo.rejected, (state) => {
+      .addMatcher(getUserInfo.matchRejected, (state) => {
         state.id = initialState.id;
         state.firstName = initialState.firstName;
         state.lastName = initialState.lastName;
         state.photo = initialState.photo;
         state.accessToken = initialState.accessToken;
       })
-      .addCase(getLaunchParams.fulfilled, (state, { payload }) => {
-        if (payload.scopes) state.scopes = payload.scopes.split(',');
-      })
-      .addCase(getUserAccessToken.fulfilled, (state, { payload }) => {
+      .addMatcher(getAccessToken.matchFulfilled, (state, { payload }) => {
         state.accessToken = payload.accessToken;
         state.scopes = payload.scope.split(',');
       });
+    userListeners(builder);
   },
 });
 

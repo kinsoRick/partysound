@@ -1,13 +1,20 @@
 import {
-  View, Panel, Header, Tabs, Group, TabsItem,
+  View, Panel, Header, Group,
 } from '@vkontakte/vkui';
 import { useTranslation } from 'react-i18next';
-import { SyntheticEvent, useState } from 'react';
+import { useEffect, useState } from 'react';
+
+import { useSelector } from 'react-redux';
 
 import FriendsTab from './Tabs/FriendsTab';
 import ParamsTab from './Tabs/ParamsTab';
-
+import HomeTabs, { TAB_FRIENDS, TAB_PARAMS } from './Tabs';
 import Alert from '../../components/Alert';
+
+import './index.css';
+import { TRootState } from '../../store';
+import { useIsUserMusicDeniedMutation } from '../../services/api';
+import { useGetAccessTokenMutation } from '../../services/api/vk';
 
 interface Props {
   id: string;
@@ -15,41 +22,37 @@ interface Props {
 
 const Home = ({ id }: Props) => {
   const { t } = useTranslation();
-  const [currentTab, setCurrentTab] = useState('friends');
 
-  const setTab = (e: SyntheticEvent<HTMLElement>) => {
-    setCurrentTab(e.currentTarget.dataset.name as string);
-  };
+  const [tab, setTab] = useState(TAB_FRIENDS);
+  const [checkUser] = useIsUserMusicDeniedMutation();
+  const [getToken] = useGetAccessTokenMutation();
+
+  const userId = useSelector((state: TRootState) => state.user.id);
+
+  useEffect(() => {
+    getToken(['friends']);
+    if (userId === -1) return;
+    checkUser(userId);
+  }, [checkUser, getToken, t, userId]);
 
   return (
     <View id={id} activePanel="main">
       <Panel id="main">
         <Header size="large">{t('main')}</Header>
-        <Alert />
         <Group mode="plain">
-          <Tabs>
-            <TabsItem
-              id="tab-friends"
-              aria-controls="tab-content-friends"
-              selected={currentTab === 'friends'}
-              onClick={setTab}
-              data-name="friends"
-            >
-              {t('friends')}
-            </TabsItem>
-            <TabsItem
-              id="tab-params"
-              aria-controls="tab-content-params"
-              selected={currentTab === 'params'}
-              onClick={setTab}
-              data-name="params"
-            >
-              {t('params')}
-            </TabsItem>
-          </Tabs>
+          <HomeTabs onTabChange={setTab} />
         </Group>
-        {(currentTab === 'friends') && <FriendsTab id="friends" />}
-        {(currentTab === 'params') && <ParamsTab id="params" />}
+        <Alert />
+        {(() => {
+          switch (tab) {
+            case TAB_FRIENDS:
+              return <FriendsTab id="friends" />;
+            case TAB_PARAMS:
+              return <ParamsTab id="params" />;
+            default:
+              return null;
+          }
+        })()}
       </Panel>
     </View>
   );

@@ -1,30 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
-
-export enum EAlertType {
-  ERROR = 'ERROR',
-  DEFAULT = 'DEFAULT',
-}
-
-interface IAlertState {
-  visible: boolean;
-  header: string;
-  description: string | null;
-  type: EAlertType;
-}
+import { EAlertType, IAlertState, TCreateAlertPayload } from './types';
 
 const initialState: IAlertState = {
   visible: false,
   header: '',
   description: null,
-  type: EAlertType.DEFAULT,
-};
-
-type TCreateAlertPayload = {
-  payload: {
-    description: string | null;
-    header: string;
-    type: EAlertType;
-  }
+  type: EAlertType.ERROR,
+  isCloseable: true,
 };
 
 const alertSlice = createSlice({
@@ -35,16 +17,18 @@ const alertSlice = createSlice({
       state.description = initialState.description;
       state.header = initialState.header;
       state.type = initialState.type;
-      state.visible = initialState.visible;
+      state.visible = false;
     },
-    createAlert: (state, { payload }: TCreateAlertPayload) => {
+    createAlert: (state, { payload }: { payload: TCreateAlertPayload }) => {
       state.description = payload.description;
       state.header = payload.header;
-      state.type = payload.type;
+      state.type = payload.type ?? EAlertType.DEFAULT;
+      state.isCloseable = payload.isCloseable ?? state.isCloseable;
       state.visible = true;
     },
   },
 });
 
+export const { actions } = alertSlice;
 export const { removeAlert, createAlert } = alertSlice.actions;
 export default alertSlice.reducer;

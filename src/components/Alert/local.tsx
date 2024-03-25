@@ -1,29 +1,34 @@
 import {
   FormStatus, Group, Div, Header, Button,
 } from '@vkontakte/vkui';
-
-import { Icon24Cancel, Icon28ReportOutline } from '@vkontakte/icons';
+import { memo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { TRootState } from '../../store';
+import { Icon24Cancel, Icon28ReportOutline } from '@vkontakte/icons';
+
 import { EAlertType } from '../../store/slices/ui/alert/types';
 
 import './alert.css';
-import useActions from '../../hooks/useActions';
+import { TRootState } from '../../store';
 
-const Alert = () => {
-  const {
-    type, header, visible, description, isCloseable,
-  } = useSelector((state: TRootState) => state.ui.alert);
+interface Props {
+  type: EAlertType;
+  header: string;
+  visible?: boolean;
+  description: string;
+  isCloseable: boolean;
+}
 
-  const { removeAlert } = useActions();
-
-  const closeAlert = () => removeAlert();
-
+const LocalAlert = ({
+  type, header, description, isCloseable, visible = true,
+}: Props) => {
+  const [isVisible, setIsVisible] = useState<boolean>(visible);
+  const globalIsVisible = useSelector((state: TRootState) => state.ui.alert.visible);
+  const closeAlert = () => setIsVisible(false);
   const icon = (type === EAlertType.ERROR) ? <Icon28ReportOutline fill="E64646" /> : null;
 
-  return visible ? (
-    <FormStatus mode="default">
+  return (isVisible && !globalIsVisible) ? (
+    <FormStatus mode="default" className="">
       <Group className="alert-group" mode="plain">
         <Div>{icon}</Div>
         <Div className="flex flex-column">
@@ -45,4 +50,4 @@ const Alert = () => {
   ) : null;
 };
 
-export default Alert;
+export default memo(LocalAlert);

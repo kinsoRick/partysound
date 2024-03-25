@@ -2,39 +2,28 @@ import {
   ConfigProvider,
   AdaptivityProvider,
   AppRoot,
-  Epic,
-  SplitLayout,
 } from '@vkontakte/vkui';
-import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 
-import selectStory from './store/selectors/epic.selectors';
-import Home from './pages/Home';
-import BottomMenu from './components/BottomMenu';
-import ModalContainer from './modals';
+import InitContainer from './InitContainer';
+import { useGetUserInfoMutation, useGetLaunchParamsMutation } from './services/api/vk';
 
-import { useAppDispatch } from './store';
-import getLaunchParams from './store/actions/getLaunchParams.action';
-import getUserInfo from './store/actions/getUserInfo.action';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 const App = () => {
-  const activeStory = useSelector(selectStory);
-  const dispatch = useAppDispatch();
+  const [getLaunchParams] = useGetLaunchParamsMutation();
+  const [getUserInfo] = useGetUserInfoMutation();
 
   useEffect(() => {
-    dispatch(getLaunchParams());
-    dispatch(getUserInfo());
-  }, [dispatch]);
+    getLaunchParams();
+    getUserInfo();
+  }, [getLaunchParams, getUserInfo]);
 
   return (
     <ConfigProvider>
       <AdaptivityProvider>
         <AppRoot>
-          <SplitLayout modal={<ModalContainer />}>
-            <Epic activeStory={activeStory} tabbar={<BottomMenu />}>
-              <Home id="home" />
-            </Epic>
-          </SplitLayout>
+          <InitContainer />
         </AppRoot>
       </AdaptivityProvider>
     </ConfigProvider>

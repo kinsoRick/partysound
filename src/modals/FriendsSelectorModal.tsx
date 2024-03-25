@@ -13,12 +13,13 @@ import { Icon24CancelOutline } from '@vkontakte/icons';
 import { useSelector } from 'react-redux';
 import debounce from 'lodash.debounce';
 
-import { setActiveModalName } from '../store/slices/ui/modals.slice';
+import { setActiveModalName } from '../store/slices/ui/modals';
 import { TRootState, useAppDispatch } from '../store';
 import FriendsList from '../components/FriendsList';
 import { setFilteredFriends } from '../store/slices/friends';
 
 import './friends-selector-modal.css';
+import { useGetFriendsMutation } from '../services/api/vk';
 
 interface Props {
   id: string;
@@ -26,11 +27,12 @@ interface Props {
 
 const FriendsSelectorModal: React.FC<Props> = ({ id }: Props) => {
   const dispatch = useAppDispatch();
+  const [getFriends] = useGetFriendsMutation();
   const [search, setSearch] = useState('');
 
-  const firstName = useSelector((state: TRootState) => state.user.firstName);
-  const lastName = useSelector((state: TRootState) => state.user.lastName);
-  const photo = useSelector((state: TRootState) => state.user.photo);
+  const {
+    firstName, lastName, photo, accessToken,
+  } = useSelector((state: TRootState) => state.user);
   const friendsAll = useSelector((state: TRootState) => state.friends.all);
   const friendsStatus = useSelector((state: TRootState) => state.friends.status);
 
@@ -38,6 +40,9 @@ const FriendsSelectorModal: React.FC<Props> = ({ id }: Props) => {
   const debouncedSearchChange = debounce(searchChange, 700);
 
   useEffect(() => {
+    if (friendsStatus === 'idle') {
+      getFriends(accessToken);
+    }
     if (friendsStatus === 'fulfilled') {
       const loweredSearch = search.toLowerCase();
       const capitalizedSearch = loweredSearch.charAt(0).toUpperCase() + loweredSearch.slice(1);
@@ -50,7 +55,7 @@ const FriendsSelectorModal: React.FC<Props> = ({ id }: Props) => {
 
       dispatch(setFilteredFriends(filtered));
     }
-  }, [friendsAll, dispatch, search, friendsStatus]);
+  }, [friendsAll, dispatch, search, friendsStatus, getFriends, accessToken]);
 
   const closeModal = () => dispatch(setActiveModalName(''));
 

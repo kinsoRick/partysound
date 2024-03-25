@@ -1,26 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
-import getFriends from '../../actions/getFriends.action';
-
-export type TFriendItem = {
-  id: number;
-  photo_200_orig: string;
-  first_name: string;
-  last_name: string;
-  is_closed: boolean;
-};
-
-interface IFriendsState {
-  status: 'pending' | 'fulfilled' | 'error' | 'idle',
-  all: TFriendItem[];
-  selected: TFriendItem[];
-  filtered: TFriendItem[];
-}
+import { getFriends } from '../../../services/api/vk';
+import { IFriendsState } from './types';
+import friendsListeners from '../../../services/listeners/friends.listener';
 
 const initialState: IFriendsState = {
   status: 'idle',
   all: [],
   selected: [],
   filtered: [],
+  closed: [],
 };
 
 const friendsSlice = createSlice({
@@ -36,17 +24,20 @@ const friendsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getFriends.pending, (state) => {
+      .addMatcher(getFriends.matchPending, (state) => {
         state.status = 'pending';
         state.all = [];
       })
-      .addCase(getFriends.fulfilled, (state, { payload }) => {
+      .addMatcher(getFriends.matchFulfilled, (state, { payload }) => {
         state.all = payload;
         state.filtered = payload;
         state.status = 'fulfilled';
       });
+
+    friendsListeners(builder);
   },
 });
 
+export const { actions } = friendsSlice;
 export const { setSelectedFriends, setFilteredFriends } = friendsSlice.actions;
 export default friendsSlice.reducer;

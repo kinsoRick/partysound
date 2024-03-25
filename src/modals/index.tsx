@@ -4,7 +4,7 @@ import {
 import { useSelector } from 'react-redux';
 
 import selectModal from '../store/selectors/modals.selectors';
-import { setActiveModalName } from '../store/slices/ui/modals.slice';
+import { setActiveModalName } from '../store/slices/ui/modals';
 
 import FriendsSelectorModal from './FriendsSelectorModal';
 import { useAppDispatch } from '../store';
