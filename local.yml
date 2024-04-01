@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_RUN_HOST=0.0.0.0
+    env_file:
+      - ./backend/.local.env
+    networks:
+      - app-network
+    volumes:
+      - ./backend:/app/backend
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: dbname
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    tty: true 
+    environment:
+       - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ./frontend:/app/frontend
+
+networks:
+  app-network:
+

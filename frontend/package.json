@@ -1,0 +1,80 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.9.5",
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^12.0.0",
+    "@testing-library/user-event": "^13.2.1",
+    "@types/jest": "^27.0.1",
+    "@types/lodash.debounce": "^4.0.7",
+    "@types/node": "^16.7.13",
+    "@types/react": "^18.2.17",
+    "@types/react-dom": "^18.2.7",
+    "@vkontakte/icons": "^2.48.1",
+    "@vkontakte/vk-bridge": "^2.8.2",
+    "@vkontakte/vk-miniapps-deploy": "^0.0.25",
+    "@vkontakte/vk-tunnel": "^0.1.0",
+    "@vkontakte/vkui": "^5.6.0",
+    "formik": "^2.4.2",
+    "i18next": "^23.4.1",
+    "lodash.debounce": "^4.0.8",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-i18next": "^13.0.2",
+    "react-loading-skeleton": "^3.4.0",
+    "react-redux": "^8.1.1",
+    "react-scripts": "5.0.1",
+    "react-virtualized": "^9.22.5",
+    "react-window": "^1.8.10",
+    "socket.io-client": "^4.7.1",
+    "styled-components": "^6.1.8",
+    "typescript": "^4.4.2",
+    "web-vitals": "^2.1.0",
+    "yup": "^1.2.0"
+  },
+  "scripts": {
+    "lint": "yarn run eslint ./src",
+    "start": "HTTPS=true react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "tunnel": "vk-tunnel --insecure=1 --http-protocol=https --ws-protocol=wss --host=localhost --port=3000",
+    "prepare": "husky install",
+    "debug": "npm-run-all --parallel start tunnel",
+    "toUnix": "forfiles /S /M *.* /C \"cmd /c dos2unix @file\""
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.6.6",
+    "@commitlint/config-conventional": "^17.6.6",
+    "@types/react-virtualized": "^9.21.29",
+    "@types/react-window": "^1.8.8",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "babel-plugin-styled-components": "^2.1.4",
+    "eslint": "^8.2.0",
+    "eslint-config-airbnb": "19.0.4",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-react": "^7.28.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "eslint-plugin-styled-components-a11y": "^2.1.32",
+    "husky": "^8.0.0",
+    "npm-run-all": "^4.1.5"
+  }
+}
