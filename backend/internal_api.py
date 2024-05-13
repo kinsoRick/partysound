@@ -14,6 +14,7 @@ class VKAPI:
 
     def __call(self, v: str, method: str, additional_params: Dict[str, Union[str, int]], is_group = False) -> Union[int, List[Dict[str, Union[str, int]]]]:
         url = 'https://api.vk.com/method/' + method
+        current_token = self.group_token if is_group else self.token
 
         if is_group:
             params = {
@@ -34,7 +35,7 @@ class VKAPI:
 
         response = get(url, params=params, headers=headers)
         if response.status_code in ERROR_HTTP_CODES:
-            self.__process_error({
+            return self.__process_error({
                 'data': response.json()['error'],
                 'method': method,
             })

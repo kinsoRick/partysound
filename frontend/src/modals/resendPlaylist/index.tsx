@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 
 import { setActiveModalName } from '../../store/slices/ui/modals';
 import { TRootState, useAppDispatch } from '../../store';
-import { useSendPlaylistMutation } from '../../services/api';
+import { useDeletePlaylistMutation, useSendPlaylistMutation } from '../../services/api';
 
 interface Props {
   id: string;
@@ -26,6 +26,7 @@ const SendPlaylistModal = ({ id }: Props) => {
   const closeModal = () => dispatch(setActiveModalName(''));
 
   const [sendPlaylist] = useSendPlaylistMutation();
+  const [deletePlaylist] = useDeletePlaylistMutation();
 
   return (
     <ModalCard
@@ -51,6 +52,24 @@ const SendPlaylistModal = ({ id }: Props) => {
             }}
           >
             {t('send')}
+          </Button>
+          
+
+          <Button
+            size="l"
+            mode="outline"
+            onClick={() => {
+              if (currentPlaylist !== null) {
+                deletePlaylist({
+                  user_id: userId,
+                  playlist_id: currentPlaylist.playlist_id,
+                });
+              }
+
+              return closeModal();
+            }}
+          >
+            {t('delete')}
           </Button>
           <Button
             size="l"

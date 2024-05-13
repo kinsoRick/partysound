@@ -12,16 +12,25 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgres
 db.init_app(app)
 CORS(app)
 
-@app.route('/', methods=['GET'])
-def index():
-    return f"{request.headers}"
-
 @app.route('/playlists/get', methods=['GET'])
 def get_user_playlists():
     user_id = str(request.headers.get('X-USER-ID'))
     user_playlists = Playlist.query.filter_by(user_id=user_id).all()
 
     return jsonify(user_playlists)
+
+@app.route('/playlist/delete', methods=['POST'])
+def delete_playlist():
+    data = request.json
+    user_id = str(request.headers.get('X-USER-ID'))
+
+    playlist_id = data['playlist_id']
+
+    user_playlist = Playlist.query.filter_by(user_id=user_id, playlist_id=playlist_id).first()
+    db.session.delete(user_playlist)
+    db.session.commit()
+
+    return jsonify(user_playlist)
 
 @app.route('/playlist/send', methods=['POST'])
 def send_playlist():
@@ -34,6 +43,7 @@ def send_playlist():
     send_playlist_message(user_id, user_playlist.owner_id, user_playlist.playlist_id)
 
     return jsonify(user_playlist)
+
 
 @app.route('/playlist/create', methods=['POST'])
 def create_playlist():

@@ -35,7 +35,7 @@ type TFormValues = {
 
 const ParamsTab = ({ id }: Props) => {
   const { t } = useTranslation();
-
+  const currentStatusFriends = useSelector((state: TRootState) => state.friends.status);
   const firstName = useSelector((state: TRootState) => state.user.firstName);
 
   const closedIds = useSelector((state: TRootState) => state.friends.closed);
@@ -56,8 +56,9 @@ const ParamsTab = ({ id }: Props) => {
 
   useEffect(() => {
     setAvailableFriends(selectedIds.filter((friend) => !closedIds.includes(friend)));
-    setIsFormDisabled(availableFriends.length < 1);
-  }, [availableFriends.length, closedIds, selectedIds]);
+    const isFormDisable = availableFriends.length < 1 || currentStatusFriends !== 'fulfilled';
+    setIsFormDisabled(isFormDisable);
+  }, [availableFriends.length, closedIds, selectedIds, currentStatusFriends]);
 
   const submitPlaylistCreation = (values: TFormValues) => {
     const userIds = (values.useUserAccount) ? [userId, ...availableFriends] : availableFriends;
@@ -81,7 +82,7 @@ const ParamsTab = ({ id }: Props) => {
         setIsFormDisabled(false);
       })
       .catch(() => {
-        setIsFormDisabled(true);
+        setIsFormDisabled(false);
       });
   };
 

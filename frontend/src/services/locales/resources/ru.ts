@@ -4,6 +4,7 @@ const ru = {
   friends: 'Друзья',
   params: 'Параметры',
   playlists: 'Плейлисты',
+  delete: 'Удалить',
   selectedFriends: 'Выбранные друзья',
   noPlaylists: 'Упс! Мы не нашли ваших плейлистов',
   noPlaylistsAction: 'Составьте плейлист, чтобы мы могли отобразить его тут',

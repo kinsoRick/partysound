@@ -7,7 +7,12 @@ import { t } from 'i18next';
 import { EAlertType } from '../../store/slices/ui/alert/types';
 import { IPlaylist } from '../../store/slices/user/types';
 
-const BASE_URL = 'https://178.205.202.2:5000';
+const BASE_URL = 'https://178.205.85.186:5000';
+
+interface ISendPlaylistRequestData {
+  user_id: string | number;
+  playlist_id: string;
+}
 
 interface ICreatePlaylistRequestData {
   title: string;
@@ -88,6 +93,13 @@ export const internalAPI = createApi({
         body: data,
       }),
     }),
+    deletePlaylist: builder.mutation<IPlaylist, ISendPlaylistRequestData>({
+      query: (data: ISendPlaylistRequestData) => ({
+        url: '/playlist/delete',
+        method: 'POST',
+        body: data,
+      }),
+    }),
     sendPlaylist: builder.mutation<boolean, ISendPlaylistRequestData>({
       query: (data: ISendPlaylistRequestData) => ({
         url: '/playlist/send',
@@ -109,6 +121,7 @@ export const {
   createPlaylist,
   getPlaylists,
   sendPlaylist,
+  deletePlaylist,
 } = internalAPI.endpoints;
 export const {
   useCreatePlaylistMutation,
@@ -116,4 +129,5 @@ export const {
   useFriendsMusicDeniedMutation,
   useGetPlaylistsMutation,
   useSendPlaylistMutation,
+  useDeletePlaylistMutation,
 } = internalAPI;

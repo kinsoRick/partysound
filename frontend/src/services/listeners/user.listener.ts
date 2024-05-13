@@ -1,5 +1,5 @@
 import { ActionReducerMapBuilder } from '@reduxjs/toolkit';
-import { createPlaylist, getPlaylists, isUserMusicDenied } from '../api';
+import { createPlaylist, deletePlaylist, getPlaylists, isUserMusicDenied } from '../api';
 import { IUserState } from '../../store/slices/user/types';
 
 const userListeners = (builder: ActionReducerMapBuilder<IUserState>) => {
@@ -21,6 +21,12 @@ const userListeners = (builder: ActionReducerMapBuilder<IUserState>) => {
       ((state, { payload }) => {
         state.currentPlaylist = payload;
         state.playlists = [...state.playlists, payload];
+      }),
+    )
+    .addMatcher(
+      deletePlaylist.matchFulfilled,
+      ((state, { payload }) => {
+        state.playlists = state.playlists.filter((playlist) => playlist.id !== payload.id);
       }),
     );
 };

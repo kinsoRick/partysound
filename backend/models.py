@@ -17,7 +17,7 @@ class Playlist(db.Model):
     user_id = db.Column(db.String(50), nullable=False)
     playlist_id = db.Column(db.String(50), nullable=False)
     owner_id = db.Column(db.String(50), nullable=False)
-    title = db.Column(db.String(100))  # Название плейлиста
-    creation_date = db.Column(db.DateTime, default=datetime.now(timezone.utc))  # Дата создания
+    title = db.Column(db.String(100))  
+    creation_date = db.Column(db.DateTime, default=datetime.now(timezone.utc)) 
     track_count = db.Column(db.Integer)
     

@@ -4,11 +4,7 @@ import { Tabbar, TabbarItem } from '@vkontakte/vkui';
 import { useSelector } from 'react-redux';
 import {
   Icon24HomeOutline,
-  Icon24FavoriteOutline,
-  Icon28SettingsOutline,
   Icon24Home,
-  Icon24Favorite,
-  Icon28Settings,
 } from '@vkontakte/icons';
 import selectStory from '../store/selectors/epic.selectors';
 import useActions from '../hooks/useActions';
@@ -30,18 +26,6 @@ const BottomMenu = () => {
         icon: <Icon24HomeOutline />,
         selectedIcon: <Icon24Home />,
         text: t('main'),
-      },
-      {
-        name: 'favorite',
-        icon: <Icon24FavoriteOutline />,
-        selectedIcon: <Icon24Favorite />,
-        text: t('favorite'),
-      },
-      {
-        name: 'settings',
-        icon: <Icon28SettingsOutline />,
-        selectedIcon: <Icon28Settings />,
-        text: t('settings'),
       },
     ],
     [t],

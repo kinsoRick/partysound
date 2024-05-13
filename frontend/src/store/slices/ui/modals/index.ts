@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { IModalsState } from './types';
 
 const initialState: IModalsState = {
-  activeModal: 'resendPlaylistModal',
+  activeModal: '',
 };
 
 const modalsSlice = createSlice({
