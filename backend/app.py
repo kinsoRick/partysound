@@ -76,9 +76,3 @@ def check_denied_users():
     users_denied = [user_id for user_id in user_ids if get_user(user_id).denied]
     return jsonify(users_denied)
 
-
-if __name__ == '__main__':
-    with app.app_context():
-        db.drop_all()
-        db.create_all()
-    app.run(debug=True, host="0.0.0.0", ssl_context='adhoc')

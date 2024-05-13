@@ -3,11 +3,8 @@ version: '3'
 services:
   backend:
     build: ./backend
-    ports:
-      - "5000:5000"
-    environment:
-      - FLASK_APP=app.py
-      - FLASK_RUN_HOST=0.0.0.0
+    expose:
+      - 8080
     env_file:
       - ./backend/.local.env
     networks:
@@ -26,16 +23,25 @@ services:
     networks:
       - app-network
 
+  traefik:  # new
+    image: traefik:v2.10
+    ports:
+      - 80:80
+      - 8081:8080
+    volumes:
+      - "./traefik/traefik.dev.toml:/etc/traefik/traefik.toml"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+
   frontend:
     build:
       context: ./frontend
-    ports:
-      - "3000:3000"
+    expose:
+      - 3000
     networks:
       - app-network
-    tty: true 
     environment:
-       - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_USEPOLLING=true
     volumes:
       - ./frontend:/app/frontend
 

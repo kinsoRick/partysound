@@ -11,4 +11,6 @@ RUN apt-get update \
     && apt-get -y install libpq-dev gcc \
     && pip install -r requirements.txt
 
-CMD ["python", "app.py"]
+
+CMD ["gunicorn","--config", "gunicorn.py", "app:app"]
+
