@@ -23,7 +23,7 @@ services:
     networks:
       - app-network
 
-   traefik:  # new
+  traefik:  # new
     build:
       context: ./traefik
       dockerfile: Dockerfile.traefik
